@@ -2,6 +2,7 @@ import { useState } from "react";
 import Button from "../atoms/Button";
 import Card from "../molecules/Card";
 import dayjs from "dayjs";
+import { getDemoDate } from "../../utils/demoDate";
 
 /**
  * MonthSelectorCard 컴포넌트
@@ -15,7 +16,7 @@ const MonthSelectorCard = ({ onChange, monthlyRevenue }) => {
   const formatYearMonth = (date) => date.format("YYYY-MM");
 
   const [yearMonth, setYearMonth] = useState(
-    formatYearMonth(dayjs(Date.now())),
+    formatYearMonth(dayjs(getDemoDate())),
   );
 
   const incrementMonth = () => {

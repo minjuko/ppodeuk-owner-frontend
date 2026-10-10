@@ -6,9 +6,10 @@ import { getHome } from "../../apis/extras";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import dayjs from "dayjs";
+import { getDemoDate } from "../../utils/demoDate";
 
 const HomeTemplate = () => {
-  const selectedDate = dayjs(Date.now()).format("YYYY-MM-DD");
+  const selectedDate = dayjs(getDemoDate()).format("YYYY-MM-DD");
   const { data } = useSuspenseQuery({
     queryKey: ["home", selectedDate],
     queryFn: () => getHome(selectedDate),

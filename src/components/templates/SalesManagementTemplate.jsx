@@ -11,6 +11,7 @@ import advancedFormat from "dayjs/plugin/advancedFormat";
 import { isEmpty } from "../../utils/isEmpty";
 import MainContentLayout from "../atoms/MainContentLayout";
 import AsideLayout from "../atoms/AsideLayout";
+import { getDemoDate } from "../../utils/demoDate";
 dayjs.extend(customParseFormat);
 dayjs.extend(advancedFormat);
 
@@ -24,9 +25,9 @@ const SalesManagementTemplate = () => {
   const [selectedCarwash, setSelectedCarwash] = useState([]);
   const [selectionInitialized, setSelectionInitialized] = useState(false);
   const [selectedDate, setSelectedDate] = useState(
-    dayjs(Date.now()).startOf("month").format("YYYY-MM-DD"),
+    dayjs(getDemoDate()).startOf("month").format("YYYY-MM-DD"),
   );
-  const selectedAt = dayjs(Date.now()).format("YYYY-MM-DDTHH:mm:ss");
+  const selectedAt = dayjs(getDemoDate()).format("YYYY-MM-DDTHH:mm:ss");
 
   const setDate = (newDate) => {
     setSelectedDate(newDate);
