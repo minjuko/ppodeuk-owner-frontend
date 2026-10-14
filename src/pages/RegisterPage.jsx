@@ -10,6 +10,7 @@ import FallbackLayout from "../components/atoms/FallbackLayout";
 import { getUserInfoThunk } from "../store/slices/authSlice";
 import { useEffect } from "react";
 import { unwrapResult } from "@reduxjs/toolkit";
+import { useToast } from "../components/feedback/ToastProvider";
 
 const ErrorFallback = ({ resetErrorBoundary }) => {
   return (
@@ -24,6 +25,7 @@ const RegisterPage = () => {
   const userName = useSelector((state) => state.auth.userName);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (!userName) {
@@ -41,15 +43,20 @@ const RegisterPage = () => {
 
     switch (errorCode) {
       case "1201":
-        alert("인증에 오류가 발생했습니다. 다시 로그인해주세요.");
+        showToast({
+          message: "인증이 만료되었습니다. 다시 로그인해 주세요.",
+          tone: "error",
+        });
         navigate("/login");
         break;
       case "1003":
-        alert("모든 데이터가 입력되지 않았습니다. 다시 시도해주세요.");
+        showToast({ message: "필수 입력값을 확인해 주세요.", tone: "error" });
         break;
       default:
-        alert("알 수 없는 오류가 발생했습니다. 홈화면으로 이동합니다.");
-        navigate("/");
+        showToast({
+          message: "입점 신청에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+          tone: "error",
+        });
         break;
     }
   };
@@ -93,7 +100,7 @@ const RegisterPage = () => {
       return register(formData);
     },
     onSuccess: () => {
-      alert("정상적으로 등록되었습니다.");
+      showToast({ message: "세차장이 등록되었습니다." });
       navigate("/");
     },
     onError: errorHandler,

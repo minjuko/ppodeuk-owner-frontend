@@ -13,11 +13,16 @@ import {
 import MobilePreview from "../organisms/MobilePreview";
 import useRegisterForm from "../../hooks/useRegisterForm";
 import { useNavigate, useParams } from "react-router-dom";
+import { useToast } from "../feedback/ToastProvider";
+import ConfirmModal from "../feedback/ConfirmModal";
+import { useState } from "react";
 
 const CarwashDetailEditingTemplate = () => {
   const navigate = useNavigate();
   const { carwash_id } = useParams();
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
+  const [imageToDelete, setImageToDelete] = useState(null);
 
   const { data } = useSuspenseQuery({
     queryKey: ["getCarwashDetail", carwash_id],
@@ -29,15 +34,20 @@ const CarwashDetailEditingTemplate = () => {
 
     switch (errorCode) {
       case "1201":
-        alert("인증에 오류가 발생했습니다. 다시 로그인해주세요.");
+        showToast({
+          message: "인증이 만료되었습니다. 다시 로그인해 주세요.",
+          tone: "error",
+        });
         navigate("/login");
         break;
       case "1003":
-        alert("모든 데이터가 입력되지 않았습니다. 다시 시도해주세요.");
+        showToast({ message: "필수 입력값을 확인해 주세요.", tone: "error" });
         break;
       default:
-        alert("알 수 없는 오류가 발생했습니다. 홈화면으로 이동합니다.");
-        navigate("/");
+        showToast({
+          message: "수정하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+          tone: "error",
+        });
         break;
     }
   };
@@ -81,7 +91,7 @@ const CarwashDetailEditingTemplate = () => {
       return putCarwashesDetails(carwash_id, formData);
     },
     onSuccess: () => {
-      alert("정상적으로 수정되었습니다.");
+      showToast({ message: "세차장 정보가 수정되었습니다." });
       queryClient.invalidateQueries({
         queryKey: ["getCarwashDetail", carwash_id],
       });
@@ -98,6 +108,8 @@ const CarwashDetailEditingTemplate = () => {
       queryClient.invalidateQueries({
         queryKey: ["getCarwashDetail", carwash_id],
       });
+      setImageToDelete(null);
+      showToast({ message: "사진이 삭제되었습니다." });
     },
     onError: errorHandler,
   });
@@ -142,16 +154,23 @@ const CarwashDetailEditingTemplate = () => {
           buttonLabel="수정하기"
           requireImage={false}
           existingImages={carwashDetail.imageFileList}
-          onDeleteExisting={(image) => {
-            if (window.confirm("이 사진을 삭제하시겠습니까?")) {
-              deleteImageMutation.mutate(image.id);
-            }
-          }}
+          onDeleteExisting={setImageToDelete}
         />
       </Box>
       <MobilePreview
         inputs={inputs}
         existingImages={carwashDetail.imageFileList}
+      />
+      <ConfirmModal
+        isOpen={Boolean(imageToDelete)}
+        title="사진 삭제"
+        message="이 사진을 삭제하시겠습니까? 삭제 후에는 복구할 수 없습니다."
+        confirmLabel="삭제"
+        pendingLabel="삭제 중..."
+        danger
+        isPending={deleteImageMutation.isPending}
+        onClose={() => setImageToDelete(null)}
+        onConfirm={() => deleteImageMutation.mutate(imageToDelete.id)}
       />
     </div>
   );

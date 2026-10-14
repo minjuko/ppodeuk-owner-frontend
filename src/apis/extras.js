@@ -15,12 +15,20 @@ export const setBayStatus = async (data) => {
 };
 
 // 매출관리 데이터
-export const getSales = async (carwash_id, selected_date, selected_at) => {
+export const getSales = async (
+  carwash_id,
+  selected_date,
+  selected_at,
+  page = 0,
+  size = 20,
+) => {
   return instance.get("/api/owner/sales", {
     params: {
       ...(carwash_id?.length ? { "carwash-ids": carwash_id.join(",") } : {}),
       "selected-date": selected_date,
       "selected-at": selected_at,
+      page,
+      size,
     },
   });
 };

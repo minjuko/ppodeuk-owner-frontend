@@ -6,38 +6,53 @@ import { Link, useNavigate } from "react-router-dom";
 import WarningMessage from "../atoms/WarningMessage";
 import { useDispatch } from "react-redux";
 import { getCarwashItemThunk } from "../../store/slices/carwashSlice";
+import { useToast } from "../feedback/ToastProvider";
+import ConfirmModal from "../feedback/ConfirmModal";
+import { useState } from "react";
 
 const CarwashBayItem = ({ carwashId, selectedDate, optime, bay }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { showToast } = useToast();
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const errorHandler = (error) => {
     const errorCode = error?.response?.data?.error?.code;
 
     switch (errorCode) {
       case "1201":
-        alert("인증에 오류가 발생했습니다. 다시 로그인해주세요.");
+        showToast({
+          message: "로그인이 만료되었습니다. 다시 로그인해주세요.",
+          tone: "error",
+        });
         navigate("/login");
         break;
       case "1001":
-        alert(
-          error?.response?.data?.error?.message ??
+        showToast({
+          message:
+            error?.response?.data?.error?.message ??
             "예약이 있는 베이는 삭제할 수 없습니다.",
-        );
+          tone: "error",
+        });
         break;
       case "1002":
-        alert("잘못된 값이 입력되었습니다. 다시 시도해주세요.");
+        showToast({
+          message: "잘못된 값이 입력되었습니다. 다시 시도해주세요.",
+          tone: "error",
+        });
         break;
       case "1301":
-        alert("베이를 찾을 수 없습니다. 다시 시도해주세요.");
+        showToast({ message: "베이를 찾을 수 없습니다.", tone: "error" });
         break;
       case "1102":
-        alert("접근 권한이 없습니다. 홈화면으로 이동합니다.");
+        showToast({ message: "접근 권한이 없습니다.", tone: "error" });
         navigate("/");
         break;
       default:
-        alert("알 수 없는 오류가 발생했습니다. 홈화면으로 이동합니다.");
-        navigate("/");
+        showToast({
+          message: "요청을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.",
+          tone: "error",
+        });
         break;
     }
   };
@@ -47,6 +62,7 @@ const CarwashBayItem = ({ carwashId, selectedDate, optime, bay }) => {
     mutationFn: (data) => setBayStatus(data),
     onSuccess: () => {
       dispatch(getCarwashItemThunk({ carwashId, selectedDate }));
+      showToast({ message: "베이 상태가 변경되었습니다." });
     },
     onError: errorHandler,
   });
@@ -55,6 +71,8 @@ const CarwashBayItem = ({ carwashId, selectedDate, optime, bay }) => {
     mutationFn: () => deleteBay(bay.bayId),
     onSuccess: () => {
       dispatch(getCarwashItemThunk({ carwashId, selectedDate }));
+      showToast({ message: `베이 ${bay.bayNo}가 삭제되었습니다.` });
+      setIsDeleteOpen(false);
     },
     onError: errorHandler,
   });
@@ -84,9 +102,7 @@ const CarwashBayItem = ({ carwashId, selectedDate, optime, bay }) => {
             onClick={(event) => {
               event.preventDefault();
               event.stopPropagation();
-              if (window.confirm(`베이 ${bay.bayNo}를 삭제하시겠습니까?`)) {
-                deleteMutation.mutate();
-              }
+              setIsDeleteOpen(true);
             }}
             disabled={deleteMutation.isPending}
           >
@@ -96,6 +112,17 @@ const CarwashBayItem = ({ carwashId, selectedDate, optime, bay }) => {
       </div>
 
       <TimeTable optime={optime} bookedTime={bay.bayBookedTimeList} />
+      <ConfirmModal
+        isOpen={isDeleteOpen}
+        title="베이 삭제"
+        message={`베이 ${bay.bayNo}를 삭제하시겠습니까?\n삭제한 베이는 복구할 수 없습니다.`}
+        confirmLabel="삭제"
+        pendingLabel="삭제 중..."
+        danger
+        isPending={deleteMutation.isPending}
+        onClose={() => setIsDeleteOpen(false)}
+        onConfirm={() => deleteMutation.mutate()}
+      />
     </Link>
   );
 };

@@ -46,10 +46,12 @@ export const deleteImage = async (image_id) => {
 export const getCarwashBayReservationHistory = async (
   bay_id,
   selected_date,
+  page = 0,
+  size = 20,
 ) => {
-  return instance.get(
-    `/api/owner/reservations/${bay_id}?selected-date=${selected_date}`,
-  );
+  return instance.get(`/api/owner/reservations/${bay_id}`, {
+    params: { "selected-date": selected_date, page, size },
+  });
 };
 
 export const cancelReservation = async (reservation_id) => {

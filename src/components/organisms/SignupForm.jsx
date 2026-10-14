@@ -7,6 +7,7 @@ import { checkUniqueEmail, signup } from "../../apis/user";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import WarningMessage from "../atoms/WarningMessage";
+import { useToast } from "../feedback/ToastProvider";
 
 const PATTERNS = {
   nickname: /^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,20}$/,
@@ -45,11 +46,12 @@ const MESSAGES = {
  * 닉네임, 이메일, 비밀번호, 비밀번호 확인, 전화번호 입력창, 회원가입 버튼을 담고 있는 박스입니다.
  */
 const SignupForm = () => {
+  const { showToast } = useToast();
   const [errorMessage, setErrorMessage] = useState("");
   const mutation = useMutation({
     mutationFn: (data) => signup(data),
     onSuccess: () => {
-      alert("회원가입이 완료되었습니다. 로그인해주세요.");
+      showToast({ message: "회원가입이 완료되었습니다. 로그인해주세요." });
       navigate("/login");
     },
     onError: (error) => {
@@ -89,18 +91,24 @@ const SignupForm = () => {
     try {
       const result = await checkUniqueEmail(email);
       if (result.data.success) setEmailChecked(true);
-      alert("사용 가능한 이메일입니다. 회원가입을 진행해주세요.");
+      showToast({ message: "사용 가능한 이메일입니다." });
     } catch (error) {
       const errorCode = error?.response?.data?.error?.code;
       switch (errorCode) {
         case "1001":
-          alert("이메일 형식에 맞게 입력해주세요.");
+          showToast({
+            message: "이메일 형식에 맞게 입력해주세요.",
+            tone: "error",
+          });
           break;
         case "1004":
-          alert("중복된 이메일이 존재합니다. 다른 이메일을 입력해주세요.");
+          showToast({ message: "이미 사용 중인 이메일입니다.", tone: "error" });
           break;
         default:
-          alert("이메일 확인 요청에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+          showToast({
+            message: "이메일 확인에 실패했습니다. 잠시 후 다시 시도해주세요.",
+            tone: "error",
+          });
           break;
       }
     }
@@ -112,7 +120,10 @@ const SignupForm = () => {
 
   const onSubmit = async (data) => {
     if (!emailChecked) {
-      alert("이메일 중복체크를 해주세요.");
+      showToast({
+        message: "이메일 중복체크를 해주세요.",
+        tone: "error",
+      });
       return;
     }
     mutation.mutate(data);

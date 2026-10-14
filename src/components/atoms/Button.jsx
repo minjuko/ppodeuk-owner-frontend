@@ -1,8 +1,9 @@
 import clsx from "clsx";
 
 const STYLES = {
-  long: "block w-96 h-14 p-4 bg-sky-500 text-white font-semibold rounded-xl disabled:bg-gray-300 disabled:text-gray-500",
-  longwhite: "block w-96 h-14 p-4 bg-white text-black font-semibold rounded-xl",
+  long: "block w-full max-w-96 h-14 p-4 bg-sky-500 text-white font-semibold rounded-xl disabled:bg-gray-300 disabled:text-gray-500",
+  longwhite:
+    "block w-full max-w-96 h-14 p-4 bg-white text-black font-semibold rounded-xl",
   small: "block h-14 p-4 bg-sky-100 text-primary font-semibold rounded-xl",
   addPhoto:
     "flex items-center px-3.5 py-1 border border-gray-300 bg-gray-100 rounded-full text-xs",

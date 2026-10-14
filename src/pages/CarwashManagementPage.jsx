@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import CarwashManagementTemplate from "../components/templates/CarwashManagementTemplate";
 import { ErrorBoundary } from "react-error-boundary";
-import LoadingAnimation from "../components/atoms/LoadingAnimation";
+import SectionSkeleton from "../components/feedback/SectionSkeleton";
 import FallbackLayout from "../components/atoms/FallbackLayout";
 
 const ErrorFallback = ({ error }) => {
@@ -30,7 +30,11 @@ const ErrorFallback = ({ error }) => {
 const CarwashManagementPage = () => {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <Suspense fallback={<LoadingAnimation />}>
+      <Suspense
+        fallback={
+          <SectionSkeleton rows={4} label="매장 목록을 불러오는 중입니다." />
+        }
+      >
         <CarwashManagementTemplate />
       </Suspense>
     </ErrorBoundary>

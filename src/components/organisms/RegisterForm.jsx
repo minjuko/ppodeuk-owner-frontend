@@ -8,6 +8,7 @@ import OpTimePicker from "../molecules/OpTimePicker";
 import { useEffect, useState } from "react";
 import { isEmpty } from "../../utils/isEmpty";
 import { telFormatter } from "../../utils/telFormatter";
+import { useToast } from "../feedback/ToastProvider";
 
 const pointLabels = [
   "하부세차",
@@ -42,6 +43,7 @@ const RegisterForm = ({
   existingImages = [],
   onDeleteExisting,
 }) => {
+  const { showToast } = useToast();
   const [errorMessage, setErrorMessage] = useState("");
   const [isDisabled, setIsDisabled] = useState(true);
 
@@ -96,7 +98,7 @@ const RegisterForm = ({
       onSubmit={(e) => {
         e.preventDefault();
         if (isDirty) mutation.mutate(inputs);
-        else alert("변경사항이 없습니다.");
+        else showToast({ message: "변경된 내용이 없습니다." });
       }}
     >
       {/* Wrapper */}

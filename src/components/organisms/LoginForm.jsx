@@ -77,7 +77,7 @@ const LoginForm = () => {
   }, [email, password]);
 
   return (
-    <Box className="grid p-14 gap-14">
+    <Box className="grid w-full max-w-lg gap-8 p-6 sm:gap-14 sm:p-14">
       <Image className="flex-center" src={Logo} />
 
       <form noValidate className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
@@ -107,7 +107,7 @@ const LoginForm = () => {
           <WarningMessage>{errors.password.message}</WarningMessage>
         )}
         {errorMessage && (
-          <div className="w-96">
+          <div className="w-full max-w-96">
             <WarningMessage>{errorMessage}</WarningMessage>
           </div>
         )}

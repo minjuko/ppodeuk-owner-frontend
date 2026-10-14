@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import RegisterFormItemStructure from "../atoms/RegisterFormItemStructure";
 import Button from "../atoms/Button";
+import { useToast } from "../feedback/ToastProvider";
 
 const ImageUploader = ({
   value = [],
@@ -8,6 +9,7 @@ const ImageUploader = ({
   existingImages = [],
   onDeleteExisting,
 }) => {
+  const { showToast } = useToast();
   const fileInputRef = useRef();
   const previewUrls = useMemo(
     () =>
@@ -31,11 +33,21 @@ const ImageUploader = ({
     if (!files.length) return;
 
     if (files[0].size > 200000) {
-      return alert("200kb 이하의 이미지만 업로드 가능합니다.");
+      showToast({
+        message: "200KB 이하의 이미지만 업로드할 수 있습니다.",
+        tone: "error",
+      });
+      e.target.value = null;
+      return;
     }
 
     if (value.some((item) => item.name === files[0].name)) {
-      return alert("이미 같은 이름의 파일이 존재합니다.");
+      showToast({
+        message: "같은 이름의 이미지가 이미 추가되어 있습니다.",
+        tone: "error",
+      });
+      e.target.value = null;
+      return;
     }
 
     Array.from(files).forEach((file) => {

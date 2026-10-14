@@ -9,8 +9,11 @@ import { isEmpty } from "../../utils/isEmpty";
 import MonthSelectorCard from "../organisms/MonthSelectorCard";
 import { useState } from "react";
 import dayjs from "dayjs";
+import Pagination from "../molecules/Pagination";
 
 const CarwashBayReservationHistoryTemplate = () => {
+  const pageSize = 20;
+  const [page, setPage] = useState(1);
   const { bayId } = useParams();
 
   const [selectedDate, setSelectedDate] = useState(
@@ -19,18 +22,22 @@ const CarwashBayReservationHistoryTemplate = () => {
 
   const setDate = (newDate) => {
     setSelectedDate(newDate);
+    setPage(1);
   };
 
   const { data } = useSuspenseQuery({
-    queryKey: ["reservationHistory", bayId, selectedDate],
-    queryFn: () => getCarwashBayReservationHistory(bayId, selectedDate),
+    queryKey: ["reservationHistory", bayId, selectedDate, page],
+    queryFn: () =>
+      getCarwashBayReservationHistory(bayId, selectedDate, page - 1, pageSize),
   });
 
   const reservationList = data?.data?.response?.reservationList;
   const bayNo = data?.data?.response?.bayNo;
+  const totalReservations =
+    data?.data?.response?.page?.totalElements ?? reservationList?.length ?? 0;
 
   return (
-    <div className="flex-16">
+    <div className="flex flex-col gap-4 xl:flex-row xl:gap-16">
       <AsideLayout>
         <MonthSelectorCard onChange={setDate} />
         <Card title={"베이 " + bayNo}></Card>
@@ -42,8 +49,8 @@ const CarwashBayReservationHistoryTemplate = () => {
             <div className="text-xl">예약 내역이 없습니다.</div>
           </div>
         ) : (
-          reservationList.map((item) => {
-            return (
+          <>
+            {reservationList.map((item) => (
               <ReservationItem
                 key={item?.reservation?.reservationId}
                 reservationId={item?.reservation?.reservationId}
@@ -54,8 +61,14 @@ const CarwashBayReservationHistoryTemplate = () => {
                 startTime={item?.reservation?.startTime}
                 endTime={item?.reservation?.endTime}
               />
-            );
-          })
+            ))}
+            <Pagination
+              page={page}
+              pageSize={pageSize}
+              totalItems={totalReservations}
+              onPageChange={setPage}
+            />
+          </>
         )}
       </MainContentLayout>
     </div>

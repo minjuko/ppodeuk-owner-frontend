@@ -11,40 +11,52 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { getCarwashItemThunk } from "../../store/slices/carwashSlice";
 import dayjs from "dayjs";
+import AsyncButton from "../feedback/AsyncButton";
+import InlineError from "../feedback/InlineError";
+import { useToast } from "../feedback/ToastProvider";
 
 const CarwashItemManagementTemplate = () => {
   const { carwash_id } = useParams();
   const selectedDate = dayjs(Date.now()).format("YYYY-MM-DD");
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { showToast } = useToast();
   const [isBayModalOpen, setIsBayModalOpen] = useState(false);
   const [bayNumber, setBayNumber] = useState("");
+  const [bayError, setBayError] = useState("");
 
   const errorHandler = (error) => {
     const errorCode = error?.response?.data?.error?.code;
 
     switch (errorCode) {
       case "1201":
-        alert("인증에 오류가 발생했습니다. 다시 로그인해주세요.");
+        showToast({
+          message: "로그인이 만료되었습니다. 다시 로그인해주세요.",
+          tone: "error",
+        });
         navigate("/login");
         break;
       case "1301":
-        alert("세차장을 찾을 수 없습니다. 매장관리로 돌아갑니다.");
+        showToast({ message: "세차장을 찾을 수 없습니다.", tone: "error" });
         navigate("/manage");
         break;
       case "1001":
-        alert("이미 사용중인 베이 번호입니다. 다른 번호로 추가해주세요.");
+        setBayError(
+          "이미 사용 중인 베이 번호입니다. 다른 번호를 입력해주세요.",
+        );
         break;
       case "1002":
-        alert("베이 번호는 숫자로 입력해주세요.");
+        setBayError("베이 번호는 숫자로 입력해주세요.");
         break;
       case "1102":
-        alert("접근 권한이 없습니다. 홈화면으로 이동합니다.");
+        showToast({ message: "접근 권한이 없습니다.", tone: "error" });
         navigate("/");
         break;
       default:
-        alert("알 수 없는 오류가 발생했습니다. 홈화면으로 이동합니다.");
-        navigate("/");
+        showToast({
+          message: "베이를 추가하지 못했습니다. 잠시 후 다시 시도해주세요.",
+          tone: "error",
+        });
         break;
     }
   };
@@ -66,6 +78,10 @@ const CarwashItemManagementTemplate = () => {
     mutationFn: (data) => addBays(data),
     onSuccess: () => {
       dispatch(getCarwashItemThunk({ carwashId: carwash_id, selectedDate }));
+      setBayNumber("");
+      setBayError("");
+      setIsBayModalOpen(false);
+      showToast({ message: "베이가 추가되었습니다." });
     },
     onError: errorHandler,
   });
@@ -73,16 +89,15 @@ const CarwashItemManagementTemplate = () => {
   const submitBay = (event) => {
     event.preventDefault();
     if (!/^\d+$/.test(bayNumber)) {
-      alert("베이 번호는 숫자로 입력해주세요.");
+      setBayError("베이 번호는 숫자로 입력해주세요.");
       return;
     }
+    setBayError("");
     mutation.mutate({ carwash_id, bay_number: bayNumber });
-    setBayNumber("");
-    setIsBayModalOpen(false);
   };
 
   return (
-    <div className="flex-16">
+    <div className="flex flex-col gap-4 xl:flex-row xl:gap-16">
       <AsideLayout>
         <Card title={name}>
           <div className="grid-2">
@@ -130,6 +145,7 @@ const CarwashItemManagementTemplate = () => {
               type="button"
               aria-label="베이 추가 닫기"
               onClick={() => setIsBayModalOpen(false)}
+              disabled={mutation.isPending}
               className="absolute text-2xl leading-none text-gray-400 right-5 top-5 hover:text-gray-700"
             >
               ×
@@ -146,21 +162,31 @@ const CarwashItemManagementTemplate = () => {
               autoFocus
               inputMode="numeric"
               value={bayNumber}
-              onChange={(event) => setBayNumber(event.target.value)}
+              onChange={(event) => {
+                setBayNumber(event.target.value);
+                setBayError("");
+              }}
               className="w-full p-3 mb-4 bg-gray-100 border border-gray-300 outline-none rounded-xl"
               placeholder="예: 4"
             />
+            {bayError ? <InlineError message={bayError} /> : null}
             <div className="flex justify-end gap-2">
               <Button
                 type="button"
                 variant="small"
                 onClick={() => setIsBayModalOpen(false)}
+                disabled={mutation.isPending}
               >
                 취소
               </Button>
-              <Button type="submit" variant="cta" disabled={mutation.isPending}>
+              <AsyncButton
+                type="submit"
+                variant="cta"
+                isPending={mutation.isPending}
+                pendingLabel="추가 중..."
+              >
                 추가하기
-              </Button>
+              </AsyncButton>
             </div>
           </form>
         </div>
