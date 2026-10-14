@@ -17,7 +17,7 @@ const queryClient = new QueryClient({
 });
 
 const prepareDemo = async () => {
-  if (import.meta.env.VITE_DEMO_MODE !== "true") return;
+  if (!__DEMO_BUILD__) return;
 
   const { worker } = await import("../demoWorker.js");
   const timeout = new Promise((resolve) => {

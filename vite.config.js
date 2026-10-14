@@ -6,6 +6,9 @@ export default ({ mode }) => {
   const env = loadEnv(mode, ".");
 
   return {
+    define: {
+      __DEMO_BUILD__: JSON.stringify(mode === "demo"),
+    },
     plugins: [
       react(),
       createHtmlPlugin({

@@ -13,6 +13,7 @@ module.exports = {
   ],
   ignorePatterns: ["dist", "dev-dist", "node_modules", ".eslintrc.cjs"],
   parserOptions: { ecmaVersion: "latest", sourceType: "module" },
+  globals: { __DEMO_BUILD__: "readonly" },
   settings: { react: { version: "18.2" } },
   plugins: ["react-refresh", "prettier"],
   rules: {
