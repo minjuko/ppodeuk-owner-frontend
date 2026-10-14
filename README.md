@@ -104,18 +104,6 @@ npm test -- --run
 npm run build
 ```
 
-## Live Deployment
-
-| Service | URL | Environment |
-|---|---|---|
-| USER Frontend | [ppodeuk-user.vercel.app](https://ppodeuk-user.vercel.app/) | Vercel |
-| OWNER Frontend | [ppodeuk-owner.vercel.app](https://ppodeuk-owner.vercel.app/) | Vercel |
-| Backend API | [team10be-production.up.railway.app](https://team10be-production.up.railway.app/) | Railway · MariaDB |
-
-USER·OWNER Frontend와 Spring Boot API·MariaDB를 연결해 배포했으며, USER 예약 흐름의 **KakaoPay 테스트 결제**까지 확인했습니다. 테스트 결제는 실제 청구를 위한 운영 결제가 아닙니다.
-
-공용 데모에서는 실제 개인정보나 결제정보를 입력하지 마세요.
-
 ## 관련 저장소
 
 - [USER Frontend](https://github.com/minjuko/ppodeuk-user-frontend) — 개인 주요 담당, 사용자 예약 흐름
