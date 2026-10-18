@@ -113,3 +113,4 @@ npm run build
 ## 문서
 
 - [2023년 기존 README 보존본](./docs/archive/README-2023-original.md)
+- [2023년 Kubernetes 설정 보관 문서](./docs/archive/k8s/README.md)
