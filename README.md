@@ -64,12 +64,13 @@ Node.js `v22.20.0`, npm `10.9.3` 환경에서 확인했습니다.
 | 검증 항목 | 결과 |
 | --- | --- |
 | Lint | 오류 0, 경고 0 |
-| Test | 5개 파일, 13개 테스트 통과 |
-| Production build | 332개 모듈 변환 |
-| Main JavaScript | 425.92 kB, gzip 139.86 kB |
-| Production dependency audit | 20건 → 4건 (critical 0) |
+| Test | 6개 파일, 16개 테스트 통과 |
+| Production build | 636개 모듈 변환 |
+| Main JavaScript | 429.23 kB, gzip 141.46 kB |
+| Production dependency audit | 10건 → 0건 |
+| Full dependency audit | 56건 (critical 3, 개발·빌드 도구) |
 
-GitHub Actions는 `main` 브랜치 push와 pull request에서 `npm ci`, lint, test, build를 순서대로 실행합니다. 남은 production 의존성 항목은 major version 변경이 필요해 자동 강제 업데이트하지 않았습니다.
+GitHub Actions는 `main` 브랜치 push와 pull request에서 `npm ci`, lint, test, build를 순서대로 실행합니다. Production 의존성 감사는 0건입니다. 전체 감사에 남은 항목은 Storybook·Vitest·Vite·MSW·Tailwind 등 개발·빌드 도구 경로이며, 해결에 major version 변경이 필요해 자동 강제 업데이트하지 않았습니다.
 
 ## 실행 방법
 
