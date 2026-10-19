@@ -7,7 +7,7 @@
 > 개인의 주요 담당 저장소는 [USER Frontend](https://github.com/minjuko/ppodeuk-user-frontend)입니다.  
 > 이 저장소에서는 팀 프로젝트 당시 **세차장 등록 화면과 초기 입력 UI, 일부 입력·공통 컴포넌트**를 맡았습니다. 이후 코드 품질 개선, 회귀 테스트와 CI 구축도 진행했습니다.
 
-## 프로젝트 정보
+## 프로젝트 개요
 
 | 항목 | 내용 |
 | --- | --- |
@@ -17,7 +17,7 @@
 | 개인 담당 | 세차장 등록 화면·초기 입력 UI, 일부 입력·공통 컴포넌트 |
 | 수상 | 카카오 테크 캠퍼스 1기 신규 서비스 개발 프로젝트 대상 |
 
-## 주요 기능
+## 주요 기능 및 화면
 
 아래는 OWNER Frontend 팀 저장소에 구현된 기능입니다.
 
@@ -27,7 +27,19 @@
 - 예약 현황과 매출 조회
 - 인증 상태에 따른 보호 페이지 접근 제어
 
-## 개인 기여
+## 기술 스택
+
+| 구분 | 기술 |
+| --- | --- |
+| Frontend | React 18, JavaScript, Vite |
+| 상태·서버 데이터 | Redux Toolkit, TanStack Query |
+| Form | React Hook Form |
+| Styling | Tailwind CSS |
+| API·Mock | Axios, MSW |
+| Test | Vitest, React Testing Library, jsdom |
+| Quality | ESLint, Prettier, GitHub Actions |
+
+## 담당 역할 및 핵심 구현
 
 ### 팀 프로젝트
 
@@ -45,34 +57,15 @@
 - GitHub Actions 기반 lint·test·build 자동 검증 구성
 - Vite React 플러그인을 `@vitejs/plugin-react-swc`로 일치
 
-## 기술 스택
+## 트러블슈팅
 
-| 구분 | 기술 |
-| --- | --- |
-| Frontend | React 18, JavaScript, Vite |
-| 상태·서버 데이터 | Redux Toolkit, TanStack Query |
-| Form | React Hook Form |
-| Styling | Tailwind CSS |
-| API·Mock | Axios, MSW |
-| Test | Vitest, React Testing Library, jsdom |
-| Quality | ESLint, Prettier, GitHub Actions |
+### 세차장 등록 폼의 비동기 상태·입력 예외 처리
 
-## 품질 검증
+- **문제:** 회원가입·세차장 등록 과정에서 요청 실패나 외부 지도 SDK 미로드 시 사용자 입력과 오류 상태 처리가 필요했습니다.
+- **해결:** 비동기 오류 메시지, 폼 변경 상태·입력 검증, Kakao SDK 미로드 예외를 보완했습니다.
+- **검증:** Vitest·React Testing Library 6개 파일·16개 테스트와 lint·build·CI로 확인했습니다.
 
-Node.js `v22.20.0`, npm `10.9.3` 환경에서 확인했습니다.
-
-| 검증 항목 | 결과 |
-| --- | --- |
-| Lint | 오류 0, 경고 0 |
-| Test | 6개 파일, 16개 테스트 통과 |
-| Production build | 636개 모듈 변환 |
-| Main JavaScript | 429.23 kB, gzip 141.46 kB |
-| Production dependency audit | 10건 → 0건 |
-| Full dependency audit | 56건 (critical 3, 개발·빌드 도구) |
-
-GitHub Actions는 `main` 브랜치 push와 pull request에서 `npm ci`, lint, test, build를 순서대로 실행합니다. Production 의존성 감사는 0건입니다. 전체 감사에 남은 항목은 Storybook·Vitest·Vite·MSW·Tailwind 등 개발·빌드 도구 경로이며, 해결에 major version 변경이 필요해 자동 강제 업데이트하지 않았습니다.
-
-## 실행 방법
+## 시작하기 (Getting Started)
 
 ### 요구 환경
 
@@ -105,12 +98,20 @@ npm test -- --run
 npm run build
 ```
 
-## 관련 저장소
+## 테스트 및 코드 품질
 
-- [USER Frontend](https://github.com/minjuko/ppodeuk-user-frontend) — 개인 주요 담당, 사용자 예약 흐름
-- [Backend](https://github.com/minjuko/ppodeuk-backend) — Backend 팀 구현
+Node.js `v22.20.0`, npm `10.9.3` 환경에서 확인했습니다.
 
-## 문서
+| 검증 항목 | 결과 |
+| --- | --- |
+| Lint | 오류 0, 경고 0 |
+| Test | 6개 파일, 16개 테스트 통과 |
+| Production build | 636개 모듈 변환 |
+| Production dependency audit | 10건 → 0건 |
 
-- [2023년 기존 README 보존본](./docs/archive/README-2023-original.md)
-- [2023년 Kubernetes 설정 보관 문서](./docs/archive/k8s/README.md)
+
+
+## 산출물 및 관련 문서
+
+- [USER Frontend](https://github.com/minjuko/ppodeuk-user-frontend) · [Backend](https://github.com/minjuko/ppodeuk-backend)
+- [기존 프로젝트 문서](docs/archive/README-2023-original.md)
